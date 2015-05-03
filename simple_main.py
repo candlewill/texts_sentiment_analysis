@@ -26,10 +26,31 @@ from sklearn.naive_bayes import MultinomialNB
 
 for train, test in cv:
     X_train, Y_train = X[train], Y[train]
-    from Utils import load_test_data
 
+    if parameters['clustering_training_data']==True:
+        neg, pos = [], []
+        for i in range(0, len(Y_train)):
+            if Y_train[i] == 0:
+                neg.append(X_train[i])
+            else:
+                pos.append(X_train[i])
+        num_cluster = parameters['num_training_cluster']
+        num_pos_cluster = num_cluster
+        num_neg_cluster = num_cluster
+        from km_cluster import nearest_tweets_cluster
+        clustered_pos = nearest_tweets_cluster(pos, num_pos_cluster)
+        clustered_neg = nearest_tweets_cluster(neg, num_neg_cluster)
+        X_train, Y_train = clustered_pos + clustered_neg, [1] * num_pos_cluster + [0] * num_neg_cluster
+        X_train, Y_train =np.array(X_train), np.array(Y_train)
+
+    from Utils import load_test_data
     X_test, Y_test = load_test_data()
     X_test, Y_test = np.array(X_test), np.array(Y_test)
+
+    if parameters['clustering_test_data']==True:
+        from km_cluster import build_clustered_testdata_hc
+        X_test,X_test_labels=build_clustered_testdata_hc(X_test)
+
 
     from vectorizer_estimator import StatisticVectorizer
     from sklearn.pipeline import FeatureUnion

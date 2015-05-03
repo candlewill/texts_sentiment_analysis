@@ -132,7 +132,7 @@ def build_clustered_testdata_hc(tweets):
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets).toarray()
     # print(tweet_vec)
-    n_clusters = 280
+    n_clusters = 3
 
     from sklearn.neighbors import kneighbors_graph
 
@@ -155,6 +155,10 @@ def build_clustered_testdata_hc(tweets):
             sent = tweets[sid] + ' ' + sent
         clustered_tweets.append(sent)
     return clustered_tweets, c
+# Test
+# T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
+# clustered_texts,c=build_clustered_testdata_hc(T)
+# print(clustered_texts,c)
 
 
 def nearest_tweets_cluster(tweets, n_clusters):
