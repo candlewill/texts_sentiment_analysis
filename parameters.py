@@ -12,15 +12,18 @@ parameters = {
     'norm': 'l1',  # 是否规格化
     'sublinear_tf': True,  # 是否对TF使用log(1+x)
 
+    # feature type
+    'combine_feature':False, # 是否使用更多的特征
+
     # 分类器
-    'classifier': 'nb',  # 贝叶斯或者svm分类器
+    'classifier': 'nb',  # 贝叶斯或者svm分类器，目前svm还有问题
 
     # 是否对training_data分群
-    'clustering_training_data': True,
+    'clustering_training_data': False,
     'num_training_cluster': 500,
 
     # 是否对test_data分群
-    'clustering_test_data': False,
-    'num_test_cluster': 200
+    'clustering_test_data': True,
+    'num_test_cluster': 280
 
 }

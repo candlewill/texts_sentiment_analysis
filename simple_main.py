@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import pylab as pl
 from parameters import parameters
-
+from sklearn.metrics import precision_recall_fscore_support
 import time
 
 st = time.time()
@@ -45,17 +45,21 @@ for train, test in cv:
 
     from Utils import load_test_data
     X_test, Y_test = load_test_data()
-    X_test, Y_test = np.array(X_test), np.array(Y_test)
+
 
     if parameters['clustering_test_data']==True:
-        from km_cluster import build_clustered_testdata_hc
-        X_test,X_test_labels=build_clustered_testdata_hc(X_test)
+        from km_cluster import build_clustered_testdata_nearest
+        X_test,X_test_labels=build_clustered_testdata_nearest(X_test)
 
+    X_test, Y_test = np.array(X_test), np.array(Y_test)
 
-    from vectorizer_estimator import StatisticVectorizer
-    from sklearn.pipeline import FeatureUnion
-    statistic_vec=StatisticVectorizer()
-    combined_features =FeatureUnion([('ngrams',vectorizer),('statistic_vec',statistic_vec)])
+    if parameters['combine_feature']==True:
+        from vectorizer_estimator import StatisticVectorizer
+        from sklearn.pipeline import FeatureUnion
+        statistic_vec=StatisticVectorizer()
+        combined_features =FeatureUnion([('ngrams',vectorizer),('statistic_vec',statistic_vec)])
+    else:
+        combined_features=vectorizer
 
     trian_vec = combined_features.fit_transform(X_train)
     pickle.dump(combined_features.get_feature_names(), open('./debug/feature_names.p', 'wb'))
@@ -71,7 +75,6 @@ for train, test in cv:
         pickle.dump(clf, open("./acc_tmp/clf.p", "wb"))
         true_labels=Y_test
         predict_labels=np.array(clf.predict(test_vec.toarray()))
-        from sklearn.metrics import precision_recall_fscore_support
         precision,recall,fbeta_score,support=precision_recall_fscore_support(true_labels, predict_labels, average='binary')
         print('精确度(Precision):%.3f\n召回率：%.3f\nF值: %.3f'%(precision,recall,fbeta_score))
     else:
@@ -81,37 +84,45 @@ for train, test in cv:
         pickle.dump(clf, open("./acc_tmp/clf.p", "wb"))
         print(trian_vec.shape, len(X_test))
         print(test_vec.shape, len(Y_test))
-        test_score = clf.score(test_vec, Y_test)
+        if parameters['clustering_test_data']==True:
+            from km_cluster import sentiment_map_cluster2tweets
+            predict_labels=np.array(sentiment_map_cluster2tweets(clf.predict(test_vec),X_test_labels))
+            precision,recall,fbeta_score,support=precision_recall_fscore_support(Y_test, predict_labels, average='binary')
+            print('精确度(Precision):%.3f\n召回率：%.3f\nF值: %.3f'%(precision,recall,fbeta_score))
 
-        scores = []
-        scores.append(test_score)
-        proba = clf.predict_proba(test_vec)
-        from sklearn.metrics import precision_recall_curve, auc
+        else:
 
-        precision, recall, pr_thresholds = precision_recall_curve(Y_test, proba[:, 1])
-        # AUC
-        aera_uc = auc(recall, precision)
-        pr_scores = []
-        pr_scores.append(aera_uc)
+            test_score = clf.score(test_vec, Y_test)
 
-        # F1_score
-        from sklearn.metrics import f1_score
-        f1 = []
-        f1.append(f1_score(Y_test, clf.predict(test_vec), average='macro'))
+            scores = []
+            scores.append(test_score)
+            proba = clf.predict_proba(test_vec)
+            from sklearn.metrics import precision_recall_curve, auc
 
-        summary = (np.mean(scores), np.mean(pr_scores), np.mean(f1))
-        # Area Under Curve （曲线下面的面积）
-        print('正确率(Accuracy)：%.3f\nP/R AUC值：%.3f\nF值(Macro-F score)：%.3f' % (summary))
+            precision, recall, pr_thresholds = precision_recall_curve(Y_test, proba[:, 1])
+            # AUC
+            aera_uc = auc(recall, precision)
+            pr_scores = []
+            pr_scores.append(aera_uc)
 
-        # 画图
-        pl.clf()
-        pl.plot(recall, precision, label='Precision-Recall curve')
-        pl.xlabel('Recall')
-        pl.ylabel('Precision')
-        pl.ylim([0.0, 1.05])
-        pl.xlim([0.0, 1.0])
-        pl.title('Precision-Recall Curve (AUC=%0.3f)' % aera_uc)
-        pl.legend(loc="lower left")
-        pl.show()
+            # F1_score
+            from sklearn.metrics import f1_score
+            f1 = []
+            f1.append(f1_score(Y_test, clf.predict(test_vec), average='macro'))
+
+            summary = (np.mean(scores), np.mean(pr_scores), np.mean(f1))
+            # Area Under Curve （曲线下面的面积）
+            print('正确率(Accuracy)：%.3f\nP/R AUC值：%.3f\nF值(Macro-F score)：%.3f' % (summary))
+
+            # 画图
+            pl.clf()
+            pl.plot(recall, precision, label='Precision-Recall curve')
+            pl.xlabel('Recall')
+            pl.ylabel('Precision')
+            pl.ylim([0.0, 1.05])
+            pl.xlim([0.0, 1.0])
+            pl.title('Precision-Recall Curve (AUC=%0.3f)' % aera_uc)
+            pl.legend(loc="lower left")
+            pl.show()
 
     print(sorted(list(parameters.items())))
