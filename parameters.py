@@ -27,3 +27,6 @@ parameters = {
     'num_test_cluster': 280
 
 }
+
+parameters['num_test_cluster']=270
+
