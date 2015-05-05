@@ -1,10 +1,11 @@
 __author__ = 'NLP-PC'
 # 配置文件
 
+# baseline classifier
 parameters = {
 
     # vectorizer参数选择
-    'min_df': 2,  # 仅考虑频率出现在min_df之上的ngrams
+    'min_df': 1/2000,  # 仅考虑频率出现在min_df之上的ngrams
     'ngram_range': (1, 3),  # ngram范围
     'test_data_size': 10000,  # 选择不同训练数据大小
     'max_df': 0.8,  # 除去太频繁出现的ngrams
@@ -20,13 +21,20 @@ parameters = {
 
     # 是否对training_data分群
     'clustering_training_data': False,
-    'num_training_cluster': 500,
+    'num_training_cluster': 0,
 
     # 是否对test_data分群
-    'clustering_test_data': True,
-    'num_test_cluster': 280
+    'clustering_test_data': False,
+    'num_test_cluster': 0
 
 }
 
-parameters['num_test_cluster']=270
+# change to clustering training data
+if parameters['clustering_training_data']==True:
+    parameters['num_training_cluster']=500
+    parameters['min_df']=1/300
+    parameters['TF_binary']=False
 
+# change to clustering test data
+if parameters['clustering_test_data']==True:
+    parameters['num_test_cluster']=200

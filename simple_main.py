@@ -5,6 +5,9 @@ import numpy as np
 import pylab as pl
 from parameters import parameters
 from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_curve, auc
+from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score
 import time
 
 st = time.time()
@@ -90,6 +93,12 @@ for train, test in cv:
             precision,recall,fbeta_score,support=precision_recall_fscore_support(Y_test, predict_labels, average='binary')
             print('精确度(Precision):%.3f\n召回率：%.3f\nF值: %.3f'%(precision,recall,fbeta_score))
 
+            predict_lables_proba=np.array(sentiment_map_cluster2tweets(clf.predict_proba(test_vec)[:,1],X_test_labels))
+            precision, recall, pr_thresholds = precision_recall_curve(Y_test, predict_lables_proba)
+            pr_scores = auc(recall, precision)
+            f1=f1_score(Y_test, predict_labels, average='macro')
+            print('正确率(Accuracy)：%.3f\nP/R AUC值：%.3f\nF值(Macro-F score)：%.3f' % (accuracy_score(Y_test,predict_labels),pr_scores,f1))
+
         else:
 
             test_score = clf.score(test_vec, Y_test)
@@ -97,7 +106,6 @@ for train, test in cv:
             scores = []
             scores.append(test_score)
             proba = clf.predict_proba(test_vec)
-            from sklearn.metrics import precision_recall_curve, auc
 
             precision, recall, pr_thresholds = precision_recall_curve(Y_test, proba[:, 1])
             # AUC
@@ -106,13 +114,14 @@ for train, test in cv:
             pr_scores.append(aera_uc)
 
             # F1_score
-            from sklearn.metrics import f1_score
             f1 = []
             f1.append(f1_score(Y_test, clf.predict(test_vec), average='macro'))
 
             summary = (np.mean(scores), np.mean(pr_scores), np.mean(f1))
             # Area Under Curve （曲线下面的面积）
             print('正确率(Accuracy)：%.3f\nP/R AUC值：%.3f\nF值(Macro-F score)：%.3f' % (summary))
+            precision_binary,recall_binary,fbeta_score_binary,support_binary=precision_recall_fscore_support(Y_test, clf.predict(test_vec), average='binary')
+            print('精确度(Precision):%.3f\n召回率：%.3f\nF值: %.3f'%(precision_binary,recall_binary,fbeta_score_binary))
 
             # 画图
             pl.clf()

@@ -82,6 +82,7 @@ def build_clustered_testdata(tweets):
     return clustered_tweets, km.labels_
 
 
+# original_labels表示tweets聚合之后所属的cluster
 def sentiment_map_cluster2tweets(cluster_senti, original_labels):
     tweets_senti = []
     for i in original_labels:
@@ -90,7 +91,7 @@ def sentiment_map_cluster2tweets(cluster_senti, original_labels):
 
 
 # Test sentiment_map_cluster2tweets
-# cluster_senti=[0,1,0]
+# cluster_senti=[0.51,.1,0.6]
 # original_labels=[0,1,0,0,1,2,1,2]
 # print(sentiment_map_cluster2tweets(cluster_senti, original_labels))
 
