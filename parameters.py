@@ -20,8 +20,8 @@ parameters = {
     'classifier': 'nb',  # 贝叶斯或者svm分类器，目前svm还有问题
 
     # 是否对training_data分群
-    'clustering_training_data': False,
-    'num_training_cluster': 0,
+    'clustering_training_data': True,
+    'num_training_cluster': 500,
 
     # 是否对test_data分群
     'clustering_test_data': False,
@@ -37,4 +37,4 @@ if parameters['clustering_training_data']==True:
 
 # change to clustering test data
 if parameters['clustering_test_data']==True:
-    parameters['num_test_cluster']=200
+    parameters['num_test_cluster']=250

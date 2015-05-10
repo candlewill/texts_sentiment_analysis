@@ -48,6 +48,8 @@ for train, test in cv:
 
     from Utils import load_test_data
     X_test, Y_test = load_test_data()
+    from km_cluster import clustering_texts_with_trainingset
+    X_test=clustering_texts_with_trainingset(X_test, X_train, 7)
 
 
     if parameters['clustering_test_data']==True:

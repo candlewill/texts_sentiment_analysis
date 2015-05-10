@@ -2,6 +2,11 @@ __author__ = 'NLP-PC'
 import pickle
 from scipy.sparse import dia_matrix as dm
 
+feature_names = pickle.load(open("./acc_tmp/clustering_texts_with_trainingset.p", "rb"))
+print(feature_names)
+exit()
+
+
 label = pickle.load(open("debug/trian_vec.p", "rb"))
 for i in range(0,10):
     a=label[i,:]
@@ -10,3 +15,4 @@ for i in range(0,10):
 
 feature_names = pickle.load(open("debug/feature_names.p", "rb"))
 print(feature_names)
+

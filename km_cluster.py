@@ -256,3 +256,36 @@ def build_clustered_testdata_nearest(tweets):
 # test
 # T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
 # print(build_clustered_testdata_nearest(T))
+
+
+# 由于上面的聚类方法导致训练集和测试数据大相径庭，因此使用training data，在其中寻找最相似的文本和test data聚合在一起
+def clustering_texts_with_trainingset(texts, trainingset,cluster_size):
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
+                                                       decode_error="ignore")
+    texts_vec = vectorizer.fit_transform(texts)
+    training_vec = vectorizer.transform(trainingset)
+    from sklearn.metrics.pairwise import pairwise_distances
+    # sim_matrix(i, j) is the distance between the ith array from X and the jth array from Y.
+    sim_matrix = 1 - pairwise_distances(texts_vec, training_vec, metric="cosine")  # euclidean as well
+    num_texts=texts_vec.shape[0]
+    cluster_size=cluster_size-1 #减1是因为最后要把texts中放入，所以其实只需选择cluster_size-1个文本
+    ind_clustered_tweets=np.zeros([num_texts,cluster_size],dtype=int)
+
+    for i in range(0,num_texts):
+        indx=np.argpartition(sim_matrix[i], -cluster_size)[-cluster_size:]
+        ind_clustered_tweets[i]=indx
+
+    trainingset=np.array(trainingset)
+    clustered_texts=[]
+    for i in range(0, num_texts):
+        ind=ind_clustered_tweets[i]
+        clustered_texts.append(texts[i]+' '+' '.join(trainingset[ind]))
+
+    import pickle
+    print('和training_data聚合在一起的training data保存在了：./acc_tmp/clustering_texts_with_trainingset.p文件中')
+    pickle.dump(clustered_texts, open("./acc_tmp/clustering_texts_with_trainingset.p", "wb"))
+    return (clustered_texts)
+# Test
+# T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
+# Tr=['Tr1 nice to meet you', 'Tr2 good to see you', 'Tr3 loving is loving each other', 'Tr4 see you']
+# print(clustering_texts_with_trainingset(T, Tr, 3))
