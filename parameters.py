@@ -44,6 +44,10 @@ if parameters['clustering_test_data'] == True:
     from km_cluster import build_clustered_testdata as km, build_clustered_testdata_hc as hc, \
         build_clustered_testdata_nearest as greedy, clustering_texts_using_trainingset as greedy_multi
 
-    parameters['clustering_test_data_method'] = [km, hc, greedy, greedy_multi][0]
-    parameters['num_test_cluster'] = 200
-    parameters['cluster_size'] = 10
+    parameters['clustering_test_data_method'] = [km, hc, greedy, greedy_multi][3]
+    parameters['use_additional_texts'] = (True if parameters['clustering_test_data_method'] == greedy_multi else False)
+    if parameters['use_additional_texts'] == False:
+        parameters['num_test_cluster'] = 200
+    else:
+        parameters['cluster_size'] = 5
+        parameters['additional_texts']=['training_data', 'test_data'][1]

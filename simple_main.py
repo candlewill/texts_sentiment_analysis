@@ -49,14 +49,17 @@ for train, test in cv:
     from Utils import load_test_data
     X_test, Y_test = load_test_data()
 
-    if parameters['clustering_test_data']==True:
-        from parameters import parameters
+    if parameters['clustering_test_data']==True and parameters['use_additional_texts']==False:
         clustering_test_data_method=parameters['clustering_test_data_method']
         X_test,X_test_labels=clustering_test_data_method(X_test, parameters['num_test_cluster'])
-
+    elif parameters['use_additional_texts']==True:
         # #另一种方法，clustering_texts_using_trainingset
-        # from km_cluster import clustering_texts_using_trainingset
-        # X_test=clustering_texts_using_trainingset(X_test, X_test, 5)
+        clustering_test_data_method=parameters['clustering_test_data_method']
+        cluster_size=parameters['cluster_size']
+        if parameters['additional_texts']=='test_data':
+            X_test,X_test_labels=clustering_test_data_method(X_test, X_test, cluster_size)
+        elif parameters['additional_texts']=='training_data':
+            X_test,X_test_labels=clustering_test_data_method(X_test, X_train, cluster_size)
 
     X_test, Y_test = np.array(X_test), np.array(Y_test)
 

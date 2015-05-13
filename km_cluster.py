@@ -126,8 +126,6 @@ def build_clustered_testdata_hc(tweets, n_clusters = 3):
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets).toarray()
     # print(tweet_vec)
-    n_clusters = 3
-
     from sklearn.neighbors import kneighbors_graph
 
     knn_graph = kneighbors_graph(tweet_vec, 2, include_self=False)
