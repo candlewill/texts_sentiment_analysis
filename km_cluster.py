@@ -58,11 +58,11 @@ def linear_split(labeled_tweets, num_cluster):
 # print(len(posts))
 # print(linear_split(posts,3))
 
-def build_clustered_testdata(tweets, num_cluster=240):
+def build_clustered_testdata(tweets, num_cluster):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets)
-    km = KMeans(n_clusters=num_cluster, init='k-means++', n_init=30, verbose=1)
+    km = KMeans(n_clusters=num_cluster, init='k-means++', n_init=10, verbose=1)
     km.fit(tweet_vec)
     clustered_tweets = []
     for i in range(0, num_cluster):
@@ -121,7 +121,7 @@ def clustering_tweets_hc(labeled_tweets, num_cluster):
 
 
 # 只有tweets一个参数，没有n_cluster需要在函数内部指定
-def build_clustered_testdata_hc(tweets):
+def build_clustered_testdata_hc(tweets, n_clusters = 3):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets).toarray()
@@ -211,7 +211,7 @@ def nearest_tweets_cluster(tweets, n_clusters):
 
 
 # 将nearest_tweets_cluster改造为可以聚类测试数据(需要返回每一个tweets对应的cluster编号)，和nearest_tweets_cluster类似，上面几乎都是这样的，聚类有两个(前者针对trainingdata，后者针对testdata)，所以看起来复杂
-def build_clustered_testdata_nearest(tweets):
+def build_clustered_testdata_nearest(tweets, num_clusters):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets)
@@ -221,9 +221,6 @@ def build_clustered_testdata_nearest(tweets):
     sim_matrix = 1 - pairwise_distances(tweet_vec, metric="cosine")  # euclidean as well
     num_tweets = tweet_vec.shape[0]
 
-    from parameters import parameters
-
-    num_clusters = parameters['num_test_cluster']
     num_tweets_in_cluster = math.ceil(num_tweets / num_clusters)  # 一共100tweets放在21个cluster中就会出错：最后一个cluster为空
 
     ind_clustered_tweets = np.zeros([num_clusters, num_tweets_in_cluster], dtype=int)
@@ -292,7 +289,7 @@ def clustering_texts_using_trainingset(texts, trainingset, cluster_size):
 
     print('和training_data聚合在一起的training data保存在了：./acc_tmp/clustering_texts_with_trainingset.p文件中')
     pickle.dump(clustered_texts, open("./acc_tmp/clustering_texts_with_trainingset.p", "wb"))
-    return (clustered_texts)
+    return (clustered_texts,range(num_texts))
     # Test
     # T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
     # Tr=['Tr1 nice to meet you', 'Tr2 good to see you', 'Tr3 loving is loving each other', 'Tr4 see you']

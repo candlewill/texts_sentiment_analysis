@@ -20,11 +20,11 @@ parameters = {
     'classifier': 'nb',  # 贝叶斯或者svm分类器，目前svm还有问题
 
     # 是否对training_data分群
-    'clustering_training_data': True,  # 具体参数设置在后面的if中
+    'clustering_training_data': False,  # 具体参数设置在后面的if中
     'num_training_cluster': 0,
 
     # 是否对test_data分群
-    'clustering_test_data': False,
+    'clustering_test_data': True,
     'num_test_cluster': 0
 
 }
@@ -45,4 +45,5 @@ if parameters['clustering_test_data'] == True:
         build_clustered_testdata_nearest as greedy, clustering_texts_using_trainingset as greedy_multi
 
     parameters['clustering_test_data_method'] = [km, hc, greedy, greedy_multi][0]
-    parameters['num_test_cluster'] = 250
+    parameters['num_test_cluster'] = 200
+    parameters['cluster_size'] = 10

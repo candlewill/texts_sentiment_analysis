@@ -52,7 +52,7 @@ for train, test in cv:
     if parameters['clustering_test_data']==True:
         from parameters import parameters
         clustering_test_data_method=parameters['clustering_test_data_method']
-        X_test,X_test_labels=clustering_test_data_method(X_test)
+        X_test,X_test_labels=clustering_test_data_method(X_test, parameters['num_test_cluster'])
 
         # #另一种方法，clustering_texts_using_trainingset
         # from km_cluster import clustering_texts_using_trainingset
