@@ -40,21 +40,23 @@ for train, test in cv:
         num_cluster = parameters['num_training_cluster']
         num_pos_cluster = num_cluster
         num_neg_cluster = num_cluster
-        from km_cluster import nearest_tweets_cluster
-        clustered_pos = nearest_tweets_cluster(pos, num_pos_cluster)
-        clustered_neg = nearest_tweets_cluster(neg, num_neg_cluster)
+        clustering_testdata=parameters['training_clustering_method']
+        clustered_pos = clustering_testdata(pos, num_pos_cluster)
+        clustered_neg = clustering_testdata(neg, num_neg_cluster)
         X_train, Y_train = clustered_pos + clustered_neg, [1] * num_pos_cluster + [0] * num_neg_cluster
         X_train, Y_train =np.array(X_train), np.array(Y_train)
 
     from Utils import load_test_data
     X_test, Y_test = load_test_data()
-    from km_cluster import clustering_texts_with_trainingset
-    X_test=clustering_texts_with_trainingset(X_test, X_train, 7)
-
 
     if parameters['clustering_test_data']==True:
-        from km_cluster import build_clustered_testdata_nearest
-        X_test,X_test_labels=build_clustered_testdata_nearest(X_test)
+        from parameters import parameters
+        clustering_test_data_method=parameters['clustering_test_data_method']
+        X_test,X_test_labels=clustering_test_data_method(X_test)
+
+        # #另一种方法，clustering_texts_using_trainingset
+        # from km_cluster import clustering_texts_using_trainingset
+        # X_test=clustering_texts_using_trainingset(X_test, X_test, 5)
 
     X_test, Y_test = np.array(X_test), np.array(Y_test)
 

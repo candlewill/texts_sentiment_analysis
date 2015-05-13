@@ -29,28 +29,21 @@ def clustering_tweets(labeled_tweets, num_cluster):
 # posts = []
 # with open(os.path.join(dir, f), 'r') as csvfile:
 # reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-#     for post in reader:
+# for post in reader:
 #         posts.append(post[1])
 # print(posts)
 # print(len(posts))
 # print(clustering_tweets(posts,3))
 
 def linear_split(labeled_tweets, num_cluster):
-    shuffle(labeled_tweets)  #是否shuffle，视情况而定
-    counter = 0
-    num_within_cluster = math.ceil(len(labeled_tweets) / num_cluster)
-    clustered_tweets = []
-    sent = ''
-    for line in labeled_tweets:
-        sent = str(line + ' ' + sent)
-        counter += 1
-        if counter >= num_within_cluster:  # 有点问题
-            clustered_tweets.append(sent)
-            counter = 0
-            sent = ''
-
-        else:
-            continue
+    labeled_tweets=np.array(labeled_tweets)
+    array=np.arange(len(labeled_tweets))
+    np.random.shuffle(array)  #是否shuffle，视情况而定
+    num_within_cluster = math.floor(len(labeled_tweets) / num_cluster)
+    array_matrix=array[0:num_within_cluster*num_cluster].reshape(num_cluster,num_within_cluster)
+    clustered_tweets=[]
+    for i in array_matrix:
+        clustered_tweets.append(' '.join(labeled_tweets[i]))
     return clustered_tweets
 
 
@@ -65,8 +58,7 @@ def linear_split(labeled_tweets, num_cluster):
 # print(len(posts))
 # print(linear_split(posts,3))
 
-def build_clustered_testdata(tweets):
-    num_cluster = 240
+def build_clustered_testdata(tweets, num_cluster=240):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets)
@@ -127,6 +119,7 @@ def clustering_tweets_hc(labeled_tweets, num_cluster):
     # T=['we are loving each other', 'we are good', 'loving is good', 'go to each other heart', 'nice to meet u']
     # print(T, clustering_tweets_hc(T, 2))
 
+
 # 只有tweets一个参数，没有n_cluster需要在函数内部指定
 def build_clustered_testdata_hc(tweets):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
@@ -143,7 +136,8 @@ def build_clustered_testdata_hc(tweets):
     connectivity = knn_graph
     from sklearn.cluster import AgglomerativeClustering
 
-    model = AgglomerativeClustering(linkage='average', connectivity=connectivity, n_clusters=n_clusters, affinity='cosine')
+    model = AgglomerativeClustering(linkage='average', connectivity=connectivity, n_clusters=n_clusters,
+                                    affinity='cosine')
     model.fit(tweet_vec)
     c = model.labels_
     # print(c,len(c))
@@ -156,6 +150,8 @@ def build_clustered_testdata_hc(tweets):
             sent = tweets[sid] + ' ' + sent
         clustered_tweets.append(sent)
     return clustered_tweets, c
+
+
 # Test
 # T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
 # clustered_texts,c=build_clustered_testdata_hc(T)
@@ -168,98 +164,109 @@ def nearest_tweets_cluster(tweets, n_clusters):
     tweet_vec = vectorizer.fit_transform(tweets)
 
     from sklearn.metrics.pairwise import pairwise_distances
+
     sim_matrix = 1 - pairwise_distances(tweet_vec, metric="cosine")  # euclidean as well
-    num_tweets=tweet_vec.shape[0]
+    num_tweets = tweet_vec.shape[0]
 
-    num_clusters=n_clusters
-    num_tweets_in_cluster=math.ceil(num_tweets/num_clusters)
+    num_clusters = n_clusters
+    num_tweets_in_cluster = math.ceil(num_tweets / num_clusters)
 
-    ind_clustered_tweets=np.zeros([num_clusters,num_tweets_in_cluster],dtype=int)
-    j=0
-    for i in range(0,num_tweets):
-        if np.any(sim_matrix[i] != -np.inf) and j<num_clusters:
-            indx =np.argpartition(sim_matrix[i], -num_tweets_in_cluster)[-num_tweets_in_cluster:]
-            ind_clustered_tweets[j] = [ind if sim_matrix[i, ind]!=-np.inf else -1 for ind in indx]
+    ind_clustered_tweets = np.zeros([num_clusters, num_tweets_in_cluster], dtype=int)
+    j = 0
+    for i in range(0, num_tweets):
+        if np.any(sim_matrix[i] != -np.inf) and j < num_clusters:
+            indx = np.argpartition(sim_matrix[i], -num_tweets_in_cluster)[-num_tweets_in_cluster:]
+            ind_clustered_tweets[j] = [ind if sim_matrix[i, ind] != -np.inf else -1 for ind in indx]
             # ind_clustered_tweets[j]=indx
-            sim_matrix[:, indx]=-np.inf
-            sim_matrix[indx, :]=-np.inf
+            sim_matrix[:, indx] = -np.inf
+            sim_matrix[indx, :] = -np.inf
             j += 1
 
-        elif j>=num_clusters:
+        elif j >= num_clusters:
             break
-        else: continue
+        else:
+            continue
 
-    tweets=np.array(tweets)
-    clustered_tweets=[]
+    tweets = np.array(tweets)
+    clustered_tweets = []
     for i in range(0, num_clusters):
-        ind=ind_clustered_tweets[i]
-        ind_illegal=np.where(ind==-1)[0] # index of -1
+        ind = ind_clustered_tweets[i]
+        ind_illegal = np.where(ind == -1)[0]  # index of -1
         # print(ind_illegal)
-        if len(ind_illegal)!=0:
-            ind=np.delete(ind, ind_illegal)
+        if len(ind_illegal) != 0:
+            ind = np.delete(ind, ind_illegal)
 
         # print(ind)
         clustered_tweets.append(' '.join(tweets[ind]))
     import pickle
+
     print('聚合在一起的training data保存在了：./acc_tmp/aggregated_training_tweets_greedy.p文件中')
     pickle.dump(clustered_tweets, open("./acc_tmp/aggregated_training_tweets_greedy.p", "wb"))
     return (clustered_tweets)
+
+
 # T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
 # print(nearest_tweets_cluster(T,3))
 # ['T4 go to each other heart T2 we are good T1 we are loving each other', 'T5 nice to meet u T3 loving is good T5 nice to meet u']
 
 
-# 将nearest_tweets_cluster改造为可以聚类测试数据(需要返回每一个tweets对应的cluster编号)，和nearest_tweets_cluster类似，上面几乎都是这样的，聚类有两个，所以看起来复杂
+# 将nearest_tweets_cluster改造为可以聚类测试数据(需要返回每一个tweets对应的cluster编号)，和nearest_tweets_cluster类似，上面几乎都是这样的，聚类有两个(前者针对trainingdata，后者针对testdata)，所以看起来复杂
 def build_clustered_testdata_nearest(tweets):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
                                                        decode_error="ignore")
     tweet_vec = vectorizer.fit_transform(tweets)
 
     from sklearn.metrics.pairwise import pairwise_distances
+
     sim_matrix = 1 - pairwise_distances(tweet_vec, metric="cosine")  # euclidean as well
-    num_tweets=tweet_vec.shape[0]
+    num_tweets = tweet_vec.shape[0]
 
     from parameters import parameters
-    num_clusters=parameters['num_test_cluster']
-    num_tweets_in_cluster=math.ceil(num_tweets/num_clusters) # 一共100tweets放在21个cluster中就会出错：最后一个cluster为空
 
-    ind_clustered_tweets=np.zeros([num_clusters,num_tweets_in_cluster],dtype=int)
-    j=0
-    for i in range(0,num_tweets):
-        if np.any(sim_matrix[i] != -np.inf) and j<num_clusters:
-            indx =np.argpartition(sim_matrix[i], -num_tweets_in_cluster)[-num_tweets_in_cluster:]
-            ind_clustered_tweets[j] = [ind if sim_matrix[i, ind]!=-np.inf else -1 for ind in indx]
+    num_clusters = parameters['num_test_cluster']
+    num_tweets_in_cluster = math.ceil(num_tweets / num_clusters)  # 一共100tweets放在21个cluster中就会出错：最后一个cluster为空
+
+    ind_clustered_tweets = np.zeros([num_clusters, num_tweets_in_cluster], dtype=int)
+    j = 0
+    for i in range(0, num_tweets):
+        if np.any(sim_matrix[i] != -np.inf) and j < num_clusters:
+            indx = np.argpartition(sim_matrix[i], -num_tweets_in_cluster)[-num_tweets_in_cluster:]
+            ind_clustered_tweets[j] = [ind if sim_matrix[i, ind] != -np.inf else -1 for ind in indx]
             # ind_clustered_tweets[j]=indx
-            sim_matrix[:, indx]=-np.inf
-            sim_matrix[indx, :]=-np.inf
+            sim_matrix[:, indx] = -np.inf
+            sim_matrix[indx, :] = -np.inf
             j += 1
 
-        elif j>=num_clusters:
+        elif j >= num_clusters:
             break
-        else: continue
+        else:
+            continue
 
-    tweets=np.array(tweets)
-    clustered_tweets=[]
+    tweets = np.array(tweets)
+    clustered_tweets = []
     for i in range(0, num_clusters):
-        ind=ind_clustered_tweets[i]
-        ind_illegal=np.where(ind==-1)[0] # index of -1
+        ind = ind_clustered_tweets[i]
+        ind_illegal = np.where(ind == -1)[0]  # index of -1
         # print(ind_illegal)
-        if len(ind_illegal)!=0:
-            ind=np.delete(ind, ind_illegal)
+        if len(ind_illegal) != 0:
+            ind = np.delete(ind, ind_illegal)
 
         # print(ind)
         clustered_tweets.append(' '.join(tweets[ind]))
     import pickle
+
     print('聚合在一起的test data 保存在了：./acc_tmp/aggregated_test_tweets_greedy.p文件中')
     pickle.dump(clustered_tweets, open("./acc_tmp/aggregated_test_tweets_greedy.p", "wb"))
-    return (clustered_tweets,[np.where(ind_clustered_tweets==tweets_id)[0][0] for tweets_id in range(0, num_tweets)])
+    return (clustered_tweets, [np.where(ind_clustered_tweets == tweets_id)[0][0] for tweets_id in range(0, num_tweets)])
+
+
 # test
 # T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
 # print(build_clustered_testdata_nearest(T))
 
 
 # 由于上面的聚类方法导致训练集和测试数据大相径庭，因此使用training data，在其中寻找最相似的文本和test data聚合在一起
-def clustering_texts_with_trainingset(texts, trainingset,cluster_size):
+def clustering_texts_using_trainingset(texts, trainingset, cluster_size):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
                                                        decode_error="ignore")
     texts_vec = vectorizer.fit_transform(texts)
@@ -267,25 +274,28 @@ def clustering_texts_with_trainingset(texts, trainingset,cluster_size):
     from sklearn.metrics.pairwise import pairwise_distances
     # sim_matrix(i, j) is the distance between the ith array from X and the jth array from Y.
     sim_matrix = 1 - pairwise_distances(texts_vec, training_vec, metric="cosine")  # euclidean as well
-    num_texts=texts_vec.shape[0]
-    cluster_size=cluster_size-1 #减1是因为最后要把texts中放入，所以其实只需选择cluster_size-1个文本
-    ind_clustered_tweets=np.zeros([num_texts,cluster_size],dtype=int)
+    num_texts = texts_vec.shape[0]
+    cluster_size = cluster_size - 1  #减1是因为最后要把texts中放入，所以其实只需选择cluster_size-1个文本
+    ind_clustered_tweets = np.zeros([num_texts, cluster_size], dtype=int)
 
-    for i in range(0,num_texts):
-        indx=np.argpartition(sim_matrix[i], -cluster_size)[-cluster_size:]
-        ind_clustered_tweets[i]=indx
-
-    trainingset=np.array(trainingset)
-    clustered_texts=[]
     for i in range(0, num_texts):
-        ind=ind_clustered_tweets[i]
-        clustered_texts.append(texts[i]+' '+' '.join(trainingset[ind]))
+        indx = np.argpartition(sim_matrix[i], -cluster_size)[-cluster_size:]
+        ind_clustered_tweets[i] = indx
+
+    trainingset = np.array(trainingset)
+    clustered_texts = []
+    for i in range(0, num_texts):
+        ind = ind_clustered_tweets[i]
+        clustered_texts.append(texts[i] + ' ' + ' '.join(trainingset[ind]))
 
     import pickle
+
     print('和training_data聚合在一起的training data保存在了：./acc_tmp/clustering_texts_with_trainingset.p文件中')
     pickle.dump(clustered_texts, open("./acc_tmp/clustering_texts_with_trainingset.p", "wb"))
     return (clustered_texts)
-# Test
-# T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
-# Tr=['Tr1 nice to meet you', 'Tr2 good to see you', 'Tr3 loving is loving each other', 'Tr4 see you']
-# print(clustering_texts_with_trainingset(T, Tr, 3))
+    # Test
+    # T=['T1 we are loving each other', 'T2 we are good', 'T3 loving is good', 'T4 go to each other heart', 'T5 nice to meet u', 'T6 you are not good']
+    # Tr=['Tr1 nice to meet you', 'Tr2 good to see you', 'Tr3 loving is loving each other', 'Tr4 see you']
+    # print(clustering_texts_using_trainingset(T, Tr, 3))
+
+
