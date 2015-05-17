@@ -53,7 +53,7 @@ for train, test in cv:
     if parameters['clustering_test_data']==True and clustering_control_param['use_additional_texts']==False:
         clustering_test_data_method=clustering_control_param['clustering_test_data_method']
         X_test,X_test_labels=clustering_test_data_method(X_test, clustering_control_param['num_test_cluster'])
-    elif clustering_control_param['use_additional_texts']==True:
+    elif parameters['clustering_test_data']==True and clustering_control_param['use_additional_texts']==True:
         # #另一种方法，clustering_texts_using_trainingset
         clustering_test_data_method=clustering_control_param['clustering_test_data_method']
         cluster_size=clustering_control_param['cluster_size']
