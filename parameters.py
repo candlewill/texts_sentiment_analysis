@@ -12,6 +12,7 @@ parameters = {
     'TF_binary': True,  # 是否使用TF-IDF加权
     'norm': 'l1',  # 是否规格化
     'sublinear_tf': True,  # 是否对TF使用log(1+x)
+    'max_features': 5000,
 
     # feature type
     'combine_feature': False,  # 是否使用更多的特征
@@ -29,4 +30,4 @@ parameters = {
 from Utils import preprocessor
 vectorizer_param={'preprocessor': preprocessor, 'ngram_range': parameters['ngram_range'], 'analyzer':'word',
                                     'min_df':parameters['min_df'], 'max_df': parameters['max_df'],
-                                    'binary': parameters['TF_binary'], 'norm': parameters['norm'],'sublinear_tf': parameters['sublinear_tf']}
+                                    'binary': parameters['TF_binary'], 'norm': parameters['norm'],'sublinear_tf': parameters['sublinear_tf'], 'max_features': parameters['max_features']}
