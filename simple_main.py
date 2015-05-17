@@ -9,6 +9,7 @@ from sklearn.metrics import precision_recall_curve, auc
 from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 import time
+from clustering_control_parameter import parameters as clustering_control_param
 
 st = time.time()
 
@@ -22,9 +23,9 @@ cv = ShuffleSplit(n=len(X), n_iter=1, test_size=0.0, random_state=0)
 from Utils import preprocessor
 from customed_vectorizer import StemmedTfidfVectorizer
 
-vectorizer = StemmedTfidfVectorizer(preprocessor=preprocessor, ngram_range=parameters['ngram_range'], analyzer='word',
-                                    min_df=parameters['min_df'], max_df=parameters['max_df'],
-                                    binary=parameters['TF_binary'], norm=parameters['norm'],sublinear_tf=parameters['sublinear_tf'])
+from parameters import vectorizer_param as param
+vectorizer = StemmedTfidfVectorizer(**param)
+
 from sklearn.naive_bayes import MultinomialNB
 
 for train, test in cv:
@@ -37,10 +38,10 @@ for train, test in cv:
                 neg.append(X_train[i])
             else:
                 pos.append(X_train[i])
-        num_cluster = parameters['num_training_cluster']
+        num_cluster = clustering_control_param['num_training_cluster']
         num_pos_cluster = num_cluster
         num_neg_cluster = num_cluster
-        clustering_testdata=parameters['training_clustering_method']
+        clustering_testdata=clustering_control_param['training_clustering_method']
         clustered_pos = clustering_testdata(pos, num_pos_cluster)
         clustered_neg = clustering_testdata(neg, num_neg_cluster)
         X_train, Y_train = clustered_pos + clustered_neg, [1] * num_pos_cluster + [0] * num_neg_cluster
@@ -49,16 +50,16 @@ for train, test in cv:
     from Utils import load_test_data
     X_test, Y_test = load_test_data()
 
-    if parameters['clustering_test_data']==True and parameters['use_additional_texts']==False:
-        clustering_test_data_method=parameters['clustering_test_data_method']
-        X_test,X_test_labels=clustering_test_data_method(X_test, parameters['num_test_cluster'])
-    elif parameters['use_additional_texts']==True:
+    if parameters['clustering_test_data']==True and clustering_control_param['use_additional_texts']==False:
+        clustering_test_data_method=clustering_control_param['clustering_test_data_method']
+        X_test,X_test_labels=clustering_test_data_method(X_test, clustering_control_param['num_test_cluster'])
+    elif clustering_control_param['use_additional_texts']==True:
         # #另一种方法，clustering_texts_using_trainingset
-        clustering_test_data_method=parameters['clustering_test_data_method']
-        cluster_size=parameters['cluster_size']
-        if parameters['additional_texts']=='test_data':
+        clustering_test_data_method=clustering_control_param['clustering_test_data_method']
+        cluster_size=clustering_control_param['cluster_size']
+        if clustering_control_param['additional_texts']=='test_data':
             X_test,X_test_labels=clustering_test_data_method(X_test, X_test, cluster_size)
-        elif parameters['additional_texts']=='training_data':
+        elif clustering_control_param['additional_texts']=='training_data':
             X_test,X_test_labels=clustering_test_data_method(X_test, X_train, cluster_size)
 
     X_test, Y_test = np.array(X_test), np.array(Y_test)

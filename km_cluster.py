@@ -6,11 +6,11 @@ import customed_vectorizer as cst_vectorizer
 from sklearn.cluster import KMeans
 from Utils import preprocessor as preprocessor
 from random import shuffle
+from parameters import vectorizer_param as param
 
 # 格式： tweet集合list
 def clustering_tweets(labeled_tweets, num_cluster):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(labeled_tweets)
     km = KMeans(n_clusters=num_cluster, init='k-means++', n_init=1, verbose=1)
     km.fit(tweet_vec)
@@ -59,8 +59,7 @@ def linear_split(labeled_tweets, num_cluster):
 # print(linear_split(posts,3))
 
 def build_clustered_testdata(tweets, num_cluster):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(tweets)
     km = KMeans(n_clusters=num_cluster, init='k-means++', n_init=10, verbose=1)
     km.fit(tweet_vec)
@@ -88,8 +87,7 @@ def sentiment_map_cluster2tweets(cluster_senti, original_labels):
 # print(sentiment_map_cluster2tweets(cluster_senti, original_labels))
 
 def clustering_tweets_hc(labeled_tweets, num_cluster):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(labeled_tweets).toarray()
     # print(tweet_vec)
     n_clusters = num_cluster
@@ -122,8 +120,7 @@ def clustering_tweets_hc(labeled_tweets, num_cluster):
 
 # 只有tweets一个参数，没有n_cluster需要在函数内部指定
 def build_clustered_testdata_hc(tweets, n_clusters = 3):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(tweets).toarray()
     # print(tweet_vec)
     from sklearn.neighbors import kneighbors_graph
@@ -157,8 +154,7 @@ def build_clustered_testdata_hc(tweets, n_clusters = 3):
 
 
 def nearest_tweets_cluster(tweets, n_clusters):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(tweets)
 
     from sklearn.metrics.pairwise import pairwise_distances
@@ -210,8 +206,7 @@ def nearest_tweets_cluster(tweets, n_clusters):
 
 # 将nearest_tweets_cluster改造为可以聚类测试数据(需要返回每一个tweets对应的cluster编号)，和nearest_tweets_cluster类似，上面几乎都是这样的，聚类有两个(前者针对trainingdata，后者针对testdata)，所以看起来复杂
 def build_clustered_testdata_nearest(tweets, num_clusters):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(tweets)
 
     from sklearn.metrics.pairwise import pairwise_distances
@@ -262,8 +257,7 @@ def build_clustered_testdata_nearest(tweets, num_clusters):
 
 # 由于上面的聚类方法导致训练集和测试数据大相径庭，因此使用training data，在其中寻找最相似的文本和test data聚合在一起
 def clustering_texts_using_trainingset(texts, trainingset, cluster_size):
-    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(preprocessor=preprocessor, min_df=1, stop_words=None,
-                                                       decode_error="ignore")
+    vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     texts_vec = vectorizer.fit_transform(texts)
     training_vec = vectorizer.transform(trainingset)
     from sklearn.metrics.pairwise import pairwise_distances
