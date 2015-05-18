@@ -35,6 +35,6 @@ yunchaohe@gmail.com
 
 **NOTICE: Still developing, more usefull function later.**
 
-[Yunchao He]: https://www.facebook.com/
-[http://sentiment-mining.blogspot.tw/]: http://sentiment-mining.blogspot.tw/
+[Yunchao He]: https://facebook.com/yunchao.h
+[http://sentiment-mining.blogspot.com/]: http://sentiment-mining.blogspot.tw/
 [YZU]: http://www.yzu.edu.tw/
