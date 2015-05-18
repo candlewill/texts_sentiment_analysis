@@ -262,6 +262,7 @@ def clustering_texts_using_trainingset(texts, trainingset, cluster_size):
     training_vec = vectorizer.transform(trainingset)
     from sklearn.metrics.pairwise import pairwise_distances
     # sim_matrix(i, j) is the distance between the ith array from X and the jth array from Y.
+    # From scikit-learn: [‘cityblock’, ‘cosine’, ‘euclidean’, ‘l1’, ‘l2’, ‘manhattan’]. These metrics support sparse matrix inputs.
     sim_matrix = 1 - pairwise_distances(texts_vec, training_vec, metric="cosine")  # euclidean as well
     num_texts = texts_vec.shape[0]
     cluster_size = cluster_size - 1  #减1是因为最后要把texts中放入，所以其实只需选择cluster_size-1个文本
