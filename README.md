@@ -18,13 +18,14 @@ Just as somebody says:
 License
 ----
 
-[Yunchao He] @YZU
+[Yunchao He] @[YZU]
 
 ### Website
 * [http://sentiment-mining.blogspot.com/]
 
 ### Installation
 We use pycharm to develop it, if you want to use it in Ubuntu, you could:
+
 ```sh
 $ git ...
 $ python3 simple_main.py
@@ -34,5 +35,6 @@ yunchaohe@gmail.com
 
 **NOTICE: Still developing, more usefull function later.**
 
-[Yunchao He]: yunchaohe@gmail.com
+[Yunchao He]: https://www.facebook.com/
 [http://sentiment-mining.blogspot.tw/]: http://sentiment-mining.blogspot.tw/
+[YZU]: http://www.yzu.edu.tw/
