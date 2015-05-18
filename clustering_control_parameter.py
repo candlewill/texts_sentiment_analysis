@@ -8,7 +8,7 @@ if param['clustering_training_data'] == True:
         nearest_tweets_cluster as greedy
 
     parameters['training_clustering_method'] = [km, rand_cluster, hc, greedy][0]
-    parameters['num_training_cluster'] = 1000
+    parameters['num_training_cluster'] = 500
     # parameters['min_df'] = 1 / 300
     # parameters['TF_binary'] = False
 
