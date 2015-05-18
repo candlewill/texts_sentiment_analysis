@@ -9,7 +9,7 @@ This project is written with python, to predict the sentiment polarity of short 
   - Short reviews
 
 Just as somebody says:
-> Traditionally it¡¯s been a problem that researchers did not have enough spatial data to answer useful questions or build compelling visualizations. Today, however, the problem is often that we have too much data. Too many scattered points on a map can overwhelm a viewer looking for a simple narrative. Furthermore, rendering a javascript web map (like Leaflet) with millions of data points on a mobile device can swamp the processor and be unresponsive.
+> Traditionally it's been a problem that researchers did not have enough spatial data to answer useful questions or build compelling visualizations. Today, however, the problem is often that we have too much data. Too many scattered points on a map can overwhelm a viewer looking for a simple narrative. Furthermore, rendering a javascript web map (like Leaflet) with millions of data points on a mobile device can swamp the processor and be unresponsive.
 
 ### Version
 1.3
@@ -21,7 +21,7 @@ License
 [Yunchao He] @YZU
 
 ### Website
-* [http://sentiment-mining.blogspot.tw/]
+* [http://sentiment-mining.blogspot.com/]
 
 ### Installation
 We use pycharm to develop it, if you want to use it in Ubuntu, you could:
@@ -32,7 +32,7 @@ $ python3 simple_main.py
 ### Contact Us
 yunchaohe@gmail.com
 
-**NOTICE: Still developing, more useful function later.**
+**NOTICE: Still developing, more usefull function later.**
 
 [Yunchao He]: yunchaohe@gmail.com
 [http://sentiment-mining.blogspot.tw/]: http://sentiment-mining.blogspot.tw/
