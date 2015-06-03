@@ -10,7 +10,7 @@ for i in range(0,len(label)):
     id_s=id[i]
     result.append([id_s,polarity])
 
-with open('acc_tmp/submission_version_1.1.csv', 'w', newline='') as f:
+with open('acc_tmp/submission_version_1.2.csv', 'w', newline='') as f:
     writer = csv.writer(f,quoting=csv.QUOTE_NONNUMERIC)
     writer.writerows(result)
 

@@ -12,7 +12,7 @@ from parameters import vectorizer_param as param
 def clustering_tweets(labeled_tweets, num_cluster):
     vectorizer = cst_vectorizer.StemmedTfidfVectorizer(**param)
     tweet_vec = vectorizer.fit_transform(labeled_tweets)
-    km = KMeans(n_clusters=num_cluster, precompute_distances='auto', init='k-means++', n_init=1, verbose=1)
+    km = KMeans(n_clusters=num_cluster, precompute_distances='auto', init='k-means++', n_init=3, verbose=1)
     km.fit(tweet_vec)
     clustered_tweets = []
     for i in range(0, num_cluster):

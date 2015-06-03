@@ -132,14 +132,14 @@ for train, test in cv:
             print('精确度(Precision):%.3f\n召回率：%.3f\nF值: %.3f'%(precision_binary,recall_binary,fbeta_score_binary))
 
             # 画图
-            pl.clf()
-            pl.plot(recall, precision, label='Precision-Recall curve')
-            pl.xlabel('Recall')
-            pl.ylabel('Precision')
-            pl.ylim([0.0, 1.05])
-            pl.xlim([0.0, 1.0])
-            pl.title('Precision-Recall Curve (AUC=%0.3f)' % aera_uc)
-            pl.legend(loc="lower left")
-            pl.show()
+            # pl.clf()
+            # pl.plot(recall, precision, label='Precision-Recall curve')
+            # pl.xlabel('Recall')
+            # pl.ylabel('Precision')
+            # pl.ylim([0.0, 1.05])
+            # pl.xlim([0.0, 1.0])
+            # pl.title('Precision-Recall Curve (AUC=%0.3f)' % aera_uc)
+            # pl.legend(loc="lower left")
+            # pl.show()
 
     print(sorted(list(parameters.items())))

@@ -96,7 +96,7 @@ def preprocessor(tweet):
 def create_ngram_model(params=None):
 
     print('start create_ngram_model...')
-    tfidf_ngrams = TfidfVectorizer(preprocessor=preprocessor, ngram_range=(1, 3), analyzer='word', binary=False)
+    tfidf_ngrams = TfidfVectorizer(preprocessor=preprocessor, ngram_range=(1, 3), analyzer='word', binary=False, min_df=1/2000, norm='l1', sublinear_tf=True)
     clf = MultinomialNB()
     pipeline = Pipeline([('vect', tfidf_ngrams), ('clf', clf)])
     return pipeline
@@ -147,13 +147,13 @@ def train_model(clc_factory, X, Y,testdata):
         clf.fit(X_train, Y_train)
 
         predict_data=clf.predict(X_test)
-        pickle.dump(predict_data, open("./kaggle_predict_label.p", "wb"))
+        pickle.dump(predict_data, open("./acc_tmp/kaggle_predict_label.p", "wb"))
 
 
 X, Y, test_review = load_data('kaggle')
 Y = np.array(Y)
 X = np.array(X)
 # train_model(create_ngram_model, X, Y,test_review)
-train_model(create_union_model, X, Y, test_review)
+train_model(create_ngram_model, X, Y, test_review)
 
 print('OK，执行完了')

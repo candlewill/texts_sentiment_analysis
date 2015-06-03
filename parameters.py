@@ -24,7 +24,7 @@ parameters = {
     'clustering_training_data': True,  # 具体参数设置在后面的if中
 
     # 是否对test_data分群
-    'clustering_test_data': False,
+    'clustering_test_data': True,
 
 }
 from Utils import preprocessor
