@@ -7,8 +7,8 @@ if param['clustering_training_data'] == True:
     from km_cluster import clustering_tweets as km, linear_split as rand_cluster, clustering_tweets_hc as hc, \
         nearest_tweets_cluster as greedy
 
-    parameters['training_clustering_method'] = [km, rand_cluster, hc, greedy][3]
-    parameters['num_training_cluster'] = 2000
+    parameters['training_clustering_method'] = [km, rand_cluster, hc, greedy][1]
+    parameters['num_training_cluster'] = 1500
     # parameters['min_df'] = 1 / 300
     # parameters['TF_binary'] = False
 
