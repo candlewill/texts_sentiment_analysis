@@ -51,8 +51,12 @@ for train, _ in cv:
     expanding_pos_content, expanding_neg_content = np.array(expanding_pos_content), np.array(expanding_neg_content)
     expanding_pos_content_vec, expanding_neg_content_vec = vectorizer.transform(expanding_pos_content), vectorizer.transform(expanding_neg_content)
 
+    # 加载测试资料
+    from Utils import load_test_data
+    X_test, Y_test = load_test_data()
+
     from test_data_clustering import expand_text_list as expanding_method
-    expanded_texts_with_pos, expanded_texts_with_neg = expanding_method(X_train, expanding_pos_content), expanding_method(X_train, expanding_neg_content)
+    expanded_texts_with_pos, expanded_texts_with_neg = expanding_method(X_test, expanding_pos_content), expanding_method(X_test, expanding_neg_content)
     expanded_texts_vec_with_pos, expanded_texts_vec_with_neg = vectorizer.transform(expanded_texts_with_pos), vectorizer.transform(expanded_texts_with_neg)
 
     clf = MultinomialNB()
@@ -63,7 +67,7 @@ for train, _ in cv:
 
     predict_expanded_texts_with_pos, predict_expanded_texts_with_neg = clf.predict_proba(expanded_texts_vec_with_pos)[:, 1], clf.predict_proba(expanded_texts_vec_with_neg)[:, 1]
 
-    print(predict_expanding_pos_content,'hello', predict_expanding_neg_content, predict_expanded_texts_with_pos, predict_expanded_texts_with_neg)
+    print(predict_expanding_pos_content, predict_expanding_neg_content, predict_expanded_texts_with_pos, predict_expanded_texts_with_neg)
 
     # 保存预测结果
     pickle.dump(predict_expanding_pos_content, open("./acc_tmp/predict/predict_expanding_pos_content.p", "wb"))
