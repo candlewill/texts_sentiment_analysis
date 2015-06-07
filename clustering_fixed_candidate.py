@@ -46,8 +46,8 @@ for train, _ in cv:
     trian_vec = vectorizer.fit_transform(X_train)
 
     # clustering test data
-    expanding_pos_content = ['@williamjone go buy some! you will love me for it!! they are simple yet amazing-ness all rolled into one']
-    expanding_neg_content = ['@stephenkruiser So sorry to hear about your dog.']
+    expanding_pos_content = ['@williamjone go buy some! you will love me for it!! they are simple yet amazing-ness all rolled into one @drdisaia Just for your comment earlier about the blonde implants ... I like the feedback']
+    expanding_neg_content = ['@stephenkruiser So sorry to hear about your dog I have been accused of being a biscuit fascist because I said Viennese biscuits were not working class']
     expanding_pos_content, expanding_neg_content = np.array(expanding_pos_content), np.array(expanding_neg_content)
     expanding_pos_content_vec, expanding_neg_content_vec = vectorizer.transform(expanding_pos_content), vectorizer.transform(expanding_neg_content)
 
@@ -63,13 +63,13 @@ for train, _ in cv:
 
     predict_expanded_texts_with_pos, predict_expanded_texts_with_neg = clf.predict_proba(expanded_texts_vec_with_pos)[:, 1], clf.predict_proba(expanded_texts_vec_with_neg)[:, 1]
 
-    print(predict_expanding_pos_content, predict_expanding_neg_content, predict_expanded_texts_with_pos, predict_expanded_texts_with_neg)
+    print(predict_expanding_pos_content,'hello', predict_expanding_neg_content, predict_expanded_texts_with_pos, predict_expanded_texts_with_neg)
 
     # 保存预测结果
-    pickle.dump(predict_expanding_pos_content, open("./acc_tmp/predict_expanding_pos_content.p", "wb"))
-    pickle.dump(predict_expanding_neg_content, open("./acc_tmp/predict_expanding_neg_content.p", "wb"))
-    pickle.dump(predict_expanded_texts_with_pos, open("./acc_tmp/predict_expanded_texts_with_pos.p", "wb"))
-    pickle.dump(predict_expanded_texts_with_neg, open("./acc_tmp/predict_expanded_texts_with_neg.p", "wb"))
+    pickle.dump(predict_expanding_pos_content, open("./acc_tmp/predict/predict_expanding_pos_content.p", "wb"))
+    pickle.dump(predict_expanding_neg_content, open("./acc_tmp/predict/predict_expanding_neg_content.p", "wb"))
+    pickle.dump(predict_expanded_texts_with_pos, open("./acc_tmp/predict/predict_expanded_texts_with_pos.p", "wb"))
+    pickle.dump(predict_expanded_texts_with_neg, open("./acc_tmp/predict/predict_expanded_texts_with_neg.p", "wb"))
     print('变量成功保存在./acc_tmp/ ^_^')
     # 画图
 
