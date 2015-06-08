@@ -46,18 +46,26 @@ for train, _ in cv:
     trian_vec = vectorizer.fit_transform(X_train)
 
     # clustering test data
-    expanding_pos_content = ['@williamjone go buy some! you will love me for it!! they are simple yet amazing-ness all rolled into one @drdisaia Just for your comment earlier about the blonde implants ... I like the feedback']
-    expanding_neg_content = ['@stephenkruiser So sorry to hear about your dog I have been accused of being a biscuit fascist because I said Viennese biscuits were not working class']
+    expanding_pos_content = [
+        '@williamjone go buy some! you will love me for it!! they are simple yet amazing-ness all rolled into one @drdisaia Just for your comment earlier about the blonde implants ... I like the feedback they are awesome when they are warm. Spesh on a cool day, with a nice strong latte']
+    expanding_neg_content = [
+        '@stephenkruiser So sorry to hear about your dog I have been accused of being a biscuit fascist because I said Viennese biscuits were not working class All my tweets are already gone, are not they  Missed you guys tonight. Just found out an outbuilding at one of my other houses has been broken into. Again. That is probably the 6th or 7th time now']
     expanding_pos_content, expanding_neg_content = np.array(expanding_pos_content), np.array(expanding_neg_content)
-    expanding_pos_content_vec, expanding_neg_content_vec = vectorizer.transform(expanding_pos_content), vectorizer.transform(expanding_neg_content)
+    expanding_pos_content_vec, expanding_neg_content_vec = vectorizer.transform(
+        expanding_pos_content), vectorizer.transform(expanding_neg_content)
 
     # 加载测试资料
     from Utils import load_test_data
+
     X_test, Y_test = load_test_data()
 
     from test_data_clustering import expand_text_list as expanding_method
-    expanded_texts_with_pos, expanded_texts_with_neg = expanding_method(X_test, expanding_pos_content), expanding_method(X_test, expanding_neg_content)
-    expanded_texts_vec_with_pos, expanded_texts_vec_with_neg = vectorizer.transform(expanded_texts_with_pos), vectorizer.transform(expanded_texts_with_neg)
+
+    expanded_texts_with_pos, expanded_texts_with_neg = expanding_method(X_test,
+                                                                        expanding_pos_content), expanding_method(X_test,
+                                                                                                                 expanding_neg_content)
+    expanded_texts_vec_with_pos, expanded_texts_vec_with_neg = vectorizer.transform(
+        expanded_texts_with_pos), vectorizer.transform(expanded_texts_with_neg)
 
     clf = MultinomialNB()
     clf.fit(trian_vec, Y_train)
@@ -65,16 +73,19 @@ for train, _ in cv:
     predict_expanding_pos_content = clf.predict_proba(expanding_pos_content_vec)[:, 1]
     predict_expanding_neg_content = clf.predict_proba(expanding_neg_content_vec)[:, 1]
 
-    predict_expanded_texts_with_pos, predict_expanded_texts_with_neg = clf.predict_proba(expanded_texts_vec_with_pos)[:, 1], clf.predict_proba(expanded_texts_vec_with_neg)[:, 1]
+    predict_expanded_texts_with_pos, predict_expanded_texts_with_neg = clf.predict_proba(expanded_texts_vec_with_pos)[:,
+                                                                       1], clf.predict_proba(
+        expanded_texts_vec_with_neg)[:, 1]
 
-    print(predict_expanding_pos_content, predict_expanding_neg_content, predict_expanded_texts_with_pos, predict_expanded_texts_with_neg)
+    predict_without_clustering = clf.predict(vectorizer.transform(X_test))
+    print(predict_expanding_pos_content, predict_expanding_neg_content, predict_expanded_texts_with_pos,
+          predict_expanded_texts_with_neg)
 
     # 保存预测结果
     pickle.dump(predict_expanding_pos_content, open("./acc_tmp/predict/predict_expanding_pos_content.p", "wb"))
     pickle.dump(predict_expanding_neg_content, open("./acc_tmp/predict/predict_expanding_neg_content.p", "wb"))
     pickle.dump(predict_expanded_texts_with_pos, open("./acc_tmp/predict/predict_expanded_texts_with_pos.p", "wb"))
     pickle.dump(predict_expanded_texts_with_neg, open("./acc_tmp/predict/predict_expanded_texts_with_neg.p", "wb"))
+    pickle.dump(predict_without_clustering, open("./acc_tmp/predict/predict_without_clustering.p", "wb"))
     print('变量成功保存在./acc_tmp/ ^_^')
     # 画图
-
-
