@@ -1,29 +1,23 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle # for simplified usage, import this patch
 
-frequencies = [6, 16, 75, 160, 244, 260, 145, 73, 16, 4, 1]  # bring some raw data
+# set up some x,y coordinates and radii
+x = [1.0, 2.0, 4.0]
+y = [1.0, 2.0, 2.0]
+r = [1/(2.0**0.5), 1/(2.0**0.5), 0.25]
 
-freq_series = pd.Series.from_array(
-    frequencies)  # in my original code I create a series and run on that, so for consistency I create a series from the list.
+fig = plt.figure()
 
-x_labels = [108300.0, 110540.0, 112780.0, 115020.0, 117260.0, 119500.0, 121740.0, 123980.0, 126220.0, 128460.0,
-            130700.0]
+# initialize axis, important: set the aspect ratio to equal
+ax = fig.add_subplot(111, aspect='equal')
 
-# now to plot the figure...
-plt.figure(figsize=(12, 8))
-ax = freq_series.plot(kind='bar')
-ax.set_title("Amount Frequency")
-ax.set_xlabel("Amount ($)")
-ax.set_ylabel("Frequency")
-ax.set_xticklabels(x_labels)
+# define axis limits for all patches to show
+ax.axis([min(x)-1., max(x)+1., min(y)-1., max(y)+1.])
 
-rects = ax.patches
+# loop through all triplets of x-,y-coordinates and radius and
+# plot a circle for each:
+for x, y, r in zip(x, y, r):
+    ax.add_artist(Circle(xy=(x, y), 
+                  radius=r))
 
-# Now make some labels
-labels = ["label%d" % i for i in range(len(rects))]
-
-for rect, label in zip(rects, labels):
-    height = rect.get_height()
-    ax.text(rect.get_x() + rect.get_width() / 2, height + 5, label, ha='center', va='bottom')
-
-plt.savefig("./images/image.png")
+plt.show()

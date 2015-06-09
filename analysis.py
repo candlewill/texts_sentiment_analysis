@@ -33,8 +33,14 @@ def analysis_result(predict, true):
 from Utils import load_test_data
 _, true = load_test_data()
 # Predict labels
-predict = pickle.load(open("./acc_tmp/predict/predict_label.p", "rb"))
-analysis_result(predict, true)
+predict_label_1 = pickle.load(open("./acc_tmp/predict/predict_label_1.p", "rb"))
+predict_label_2 = pickle.load(open("./acc_tmp/predict/predict_label_2.p", "rb"))
+predict_label_3 = pickle.load(open("./acc_tmp/predict/predict_label_3.p", "rb"))
+predict_label_4 = pickle.load(open("./acc_tmp/predict/predict_label_4.p", "rb"))
+analysis_result(predict_label_1, true)
+analysis_result(predict_label_2, true)
+analysis_result(predict_label_3, true)
+analysis_result(predict_label_4, true)
 
 predict_without_clustering =  pickle.load(open("./acc_tmp/predict/predict_without_clustering.p", "rb"))
 analysis_result(predict_without_clustering, true)

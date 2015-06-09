@@ -46,10 +46,9 @@ for train, _ in cv:
     trian_vec = vectorizer.fit_transform(X_train)
 
     # clustering test data
-    expanding_pos_content = [
-        '@williamjone go buy some! you will love me for it!! they are simple yet amazing-ness all rolled into one @drdisaia Just for your comment earlier about the blonde implants ... I like the feedback they are awesome when they are warm. Spesh on a cool day, with a nice strong latte']
-    expanding_neg_content = [
-        '@stephenkruiser So sorry to hear about your dog I have been accused of being a biscuit fascist because I said Viennese biscuits were not working class All my tweets are already gone, are not they  Missed you guys tonight. Just found out an outbuilding at one of my other houses has been broken into. Again. That is probably the 6th or 7th time now']
+    from candidate_content import get_candidate
+
+    expanding_pos_content, expanding_neg_content = get_candidate()
     expanding_pos_content, expanding_neg_content = np.array(expanding_pos_content), np.array(expanding_neg_content)
     expanding_pos_content_vec, expanding_neg_content_vec = vectorizer.transform(
         expanding_pos_content), vectorizer.transform(expanding_neg_content)
