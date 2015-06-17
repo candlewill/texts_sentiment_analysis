@@ -19,7 +19,22 @@ logger.info('成功加载分类器模型')
 from customed_vectorizer import StemmedTfidfVectorizer
 from parameters import vectorizer_param as param
 vectorizer = StemmedTfidfVectorizer(**param)
-neg_clustered_texts_vec = vectorizer.transform(neg_clustered_texts)
-neg_extantion_content_vec = vectorizer.transform(neg_extantion_content)
-pos_clustered_texts_vec = vectorizer.transform(pos_clustered_texts)
-pos_extantion_content_vec = vectorizer.transform(pos_extantion_content)
+neg_clustered_texts_vec = vectorizer.fit_transform(neg_clustered_texts)
+neg_extantion_content_vec = vectorizer.fit_transform(neg_extantion_content)
+pos_clustered_texts_vec = vectorizer.fit_transform(pos_clustered_texts)
+pos_extantion_content_vec = vectorizer.fit_transform(pos_extantion_content)
+logger.info('向量化完成')
+
+# 预测
+predict_neg_clustered_texts_vec = clf.predict_proba(neg_clustered_texts_vec)[:, 1]
+predict_neg_extantion_content_vec = clf.predict_proba(neg_extantion_content_vec)[:, 1]
+predict_pos_clustered_texts_vec = clf.predict_proba(pos_clustered_texts_vec)[:, 1]
+predict_pos_extantion_content_vec = clf.predict_proba(pos_extantion_content_vec)[:, 1]
+logger.info('完成预测，即将保存')
+
+# 保存结果
+pickle.dump(predict_neg_clustered_texts_vec, open("./data/predict_dynamics/predict_neg_clustered_texts_vec.p", "wb"))
+pickle.dump(predict_neg_extantion_content_vec, open("./data/predict_dynamics/predict_neg_extantion_content_vec.p", "wb"))
+pickle.dump(predict_pos_clustered_texts_vec, open("./data/predict_dynamics/predict_pos_clustered_texts_vec.p", "wb"))
+pickle.dump(predict_pos_extantion_content_vec, open("./data/predict_dynamics/predict_pos_extantion_content_vec.p", "wb"))
+logger.info('完成保存')
