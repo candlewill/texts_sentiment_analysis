@@ -59,9 +59,9 @@ for train, _ in cv:
     X_test, Y_test = load_test_data()
 
     # 下面代码临时执行，需要用时再执行，不用时注释，用来产生扩展的test data
-    # from candidate_content import get_candidate_dynamic
-    # get_candidate_dynamic(X_test, neg, 5, 'neg')
-    # get_candidate_dynamic(X_test, pos, 5, 'pos')
+    from candidate_content import get_candidate_dynamic
+    # get_candidate_dynamic(X_test, neg, 8, 'neg')
+    # get_candidate_dynamic(X_test, pos, 8, 'pos')
     # exit()
     # 临时执行代码结束，为了更好的组织代码结构，将此文件另存为一份dynamic_classifer.py
 
@@ -80,28 +80,30 @@ for train, _ in cv:
     pickle.dump(clf, open("./acc_tmp/predict/classifier.p", "wb"))
     print('贝叶斯分类器保存在了./acc_tmp/文件夹classifier.p中 OK')
 
-    predict_expanding_pos_content = clf.predict_proba(expanding_pos_content_vec)[:, 1]
-    predict_expanding_neg_content = clf.predict_proba(expanding_neg_content_vec)[:, 1]
+    # 方法一
+    # predict_expanding_pos_content = clf.predict_proba(expanding_pos_content_vec)[:, 1]
+    # predict_expanding_neg_content = clf.predict_proba(expanding_neg_content_vec)[:, 1]
+    #
+    # predict_expanded_texts_with_pos, predict_expanded_texts_with_neg = clf.predict_proba(expanded_texts_vec_with_pos)[:,
+    #                                                                    1], clf.predict_proba(
+    #     expanded_texts_vec_with_neg)[:, 1]
+    #
+    # predict_without_clustering = clf.predict(vectorizer.transform(X_test))
+    # print(predict_expanding_pos_content, predict_expanding_neg_content, predict_expanded_texts_with_pos,
+    #       predict_expanded_texts_with_neg)
+    #
+    # # 保存预测结果
+    # pickle.dump(predict_expanding_pos_content, open("./acc_tmp/predict/predict_expanding_pos_content.p", "wb"))
+    # pickle.dump(predict_expanding_neg_content, open("./acc_tmp/predict/predict_expanding_neg_content.p", "wb"))
+    # pickle.dump(predict_expanded_texts_with_pos, open("./acc_tmp/predict/predict_expanded_texts_with_pos.p", "wb"))
+    # pickle.dump(predict_expanded_texts_with_neg, open("./acc_tmp/predict/predict_expanded_texts_with_neg.p", "wb"))
+    # pickle.dump(predict_without_clustering, open("./acc_tmp/predict/predict_without_clustering.p", "wb"))
+    # print('变量成功保存在./acc_tmp/ ^_^')
+    # # 画图
+    # 方法一结束
 
-    predict_expanded_texts_with_pos, predict_expanded_texts_with_neg = clf.predict_proba(expanded_texts_vec_with_pos)[:,
-                                                                       1], clf.predict_proba(
-        expanded_texts_vec_with_neg)[:, 1]
 
-    predict_without_clustering = clf.predict(vectorizer.transform(X_test))
-    print(predict_expanding_pos_content, predict_expanding_neg_content, predict_expanded_texts_with_pos,
-          predict_expanded_texts_with_neg)
-
-    # 保存预测结果
-    pickle.dump(predict_expanding_pos_content, open("./acc_tmp/predict/predict_expanding_pos_content.p", "wb"))
-    pickle.dump(predict_expanding_neg_content, open("./acc_tmp/predict/predict_expanding_neg_content.p", "wb"))
-    pickle.dump(predict_expanded_texts_with_pos, open("./acc_tmp/predict/predict_expanded_texts_with_pos.p", "wb"))
-    pickle.dump(predict_expanded_texts_with_neg, open("./acc_tmp/predict/predict_expanded_texts_with_neg.p", "wb"))
-    pickle.dump(predict_without_clustering, open("./acc_tmp/predict/predict_without_clustering.p", "wb"))
-    print('变量成功保存在./acc_tmp/ ^_^')
-    # 画图
-
-
-
+    # 方法二
     # 强制插入
     import logging
 
