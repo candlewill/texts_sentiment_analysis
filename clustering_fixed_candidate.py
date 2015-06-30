@@ -137,7 +137,9 @@ for train, _ in cv:
     from Utils import load_test_data
 
     text, _ = load_test_data()
-    predict_testdata_without_clustering = clf.predict_proba(vectorizer.transform(text))[:, 1]
+    transformed_text = vectorizer.transform(text)
+    predict_testdata_without_clustering = clf.predict_proba(transformed_text)[:, 1]
+    predict_lable_testdata_without_clustering = clf.predict(transformed_text)
     logger.info('完成预测，即将保存')
 
     # 保存结果
@@ -146,5 +148,6 @@ for train, _ in cv:
     pickle.dump(predict_pos_clustered_texts_vec, open("./data/predict_dynamics/predict_pos_clustered_texts_vec.p", "wb"))
     pickle.dump(predict_pos_extantion_content_vec, open("./data/predict_dynamics/predict_pos_extantion_content_vec.p", "wb"))
     pickle.dump(predict_testdata_without_clustering, open("./data/predict_dynamics/predict_testdata_without_clustering.p", "wb"))
+    pickle.dump(predict_lable_testdata_without_clustering, open("./data/predict_dynamics/predict_lable_testdata_without_clustering.p", "wb"))
     logger.info('完成保存')
     # 强制插入结束

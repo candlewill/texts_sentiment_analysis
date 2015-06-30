@@ -1,6 +1,9 @@
 # coding: utf-8
 __author__ = 'NLP-PC'
+import pickle
 # 分析由predict_using_pretrained_model产生的四个文件中的数据，以函数形式供调用
+predict_lable_testdata_without_clustering = pickle.load(open("./data/predict_dynamics/predict_lable_testdata_without_clustering.p", "rb"))
+
 
 def analysis_dynamics(expand_with_pos, expand_with_neg, pos_expand_content, neg_expand_content):
     from matplotlib import pyplot as plt
@@ -57,3 +60,9 @@ expand_with_neg = pickle.load(open("./data/predict_dynamics/predict_neg_clustere
 pos_expand_content = pickle.load(open("./data/predict_dynamics/predict_pos_extantion_content_vec.p", "rb"))
 neg_expand_content = pickle.load(open("./data/predict_dynamics/predict_neg_extantion_content_vec.p", "rb"))
 analysis_dynamics(expand_with_pos, expand_with_neg, pos_expand_content, neg_expand_content)
+
+# predict
+predict1 =[0 if ele==True else 1 for ele in ((1 - expand_with_pos) > expand_with_neg)]
+from analysis import analysis_result as ar
+ar(predict1,true)
+ar(predict_lable_testdata_without_clustering,true)
